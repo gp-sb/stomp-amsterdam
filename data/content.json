@@ -1,0 +1,152 @@
+{
+  "brand": {
+    "name": "STOMP",
+    "city": "Amsterdam",
+    "tagline": "Queer line dancing, brought to Amsterdam.",
+    "updated": "2026-06-16"
+  },
+  "hero": {
+    "kicker": "Amsterdam-Noord · all are welcome",
+    "headline": "Ready to stomp those boots?",
+    "sub": "A queer country line-dancing night where the whole floor moves together. No partner, no experience, no judgment — just boots, big tunes, and good people.",
+    "videoUrl": "",
+    "poster": "https://picsum.photos/seed/stomp-hero/1600/1000?grayscale"
+  },
+  "keyLinks": [
+    { "label": "Donate", "sub": "Keep the floor free & queer", "url": "https://example.com/donate", "icon": "heart" },
+    { "label": "Follow on Instagram", "sub": "@stomp.amsterdam", "url": "https://instagram.com/stomp.amsterdam", "icon": "instagram" },
+    { "label": "Join the WhatsApp", "sub": "Dates, carpools & dance chat", "url": "https://chat.whatsapp.com/your-invite", "icon": "whatsapp" }
+  ],
+  "waysToDance": [
+    {
+      "name": "THE PARTY",
+      "level": "Absolute beginner",
+      "blurb": "A rowdy, joyful night where you'll learn 7–8 easy line dances, holler along to a few country classics, and dance till your boots give out. High energy, very social, zero experience needed.",
+      "color": "denim",
+      "image": "https://picsum.photos/seed/stomp-party/1200/900"
+    },
+    {
+      "name": "THE CLASS",
+      "level": "Beginner & intermediate",
+      "blurb": "Ready to take the hobby up a notch? A calmer room where we drill 2–4 dances and then social-dance the ones we've learned at past nights. Come build your repertoire.",
+      "color": "butter",
+      "image": "https://picsum.photos/seed/stomp-class/1200/900"
+    }
+  ],
+  "about": {
+    "lead": "STOMP started with one queer line-dancing night in Amsterdam-Noord and a simple idea:",
+    "highlight": "everyone deserves a dance floor where they belong.",
+    "body": "Part honky-tonk, part block party, all heart — we bring together the fun of a night out and the structure of real line-dance training, with a crowd that actually cheers for the people learning.",
+    "fullStoryUrl": "about.html",
+    "photos": [
+      "https://picsum.photos/seed/stomp-about1/900/900",
+      "https://picsum.photos/seed/stomp-about2/600/600"
+    ]
+  },
+  "events": [
+    {
+      "id": "evt-001",
+      "title": "Concrete Honky-Tonk",
+      "date": "2026-06-19",
+      "start": "23:00",
+      "end": "04:00",
+      "venue": "Tolhuistuin",
+      "city": "Amsterdam-Noord",
+      "type": "THE PARTY",
+      "status": "few-left",
+      "lumaUrl": "https://lu.ma/stomp-honky-tonk",
+      "ticketUrl": "https://lu.ma/stomp-honky-tonk",
+      "cover": "https://picsum.photos/seed/stomp-evt1/1200/800",
+      "blurb": "Our flagship beginner night — 8 dances, one big queer crowd, and a wall of twang."
+    },
+    {
+      "id": "evt-002",
+      "title": "Boots & Beginners",
+      "date": "2026-06-26",
+      "start": "19:30",
+      "end": "22:30",
+      "venue": "De School",
+      "city": "Amsterdam",
+      "type": "THE CLASS",
+      "status": "on-sale",
+      "lumaUrl": "https://lu.ma/stomp-boots-beginners",
+      "ticketUrl": "https://lu.ma/stomp-boots-beginners",
+      "cover": "https://picsum.photos/seed/stomp-evt2/1200/800",
+      "blurb": "Drill the fundamentals, then social-dance the classics. Beginner & intermediate."
+    },
+    {
+      "id": "evt-003",
+      "title": "Pride Stampede",
+      "date": "2026-08-01",
+      "start": "22:00",
+      "end": "05:00",
+      "venue": "Westergas",
+      "city": "Amsterdam",
+      "type": "THE PARTY",
+      "status": "sold-out",
+      "lumaUrl": "https://lu.ma/stomp-pride-stampede",
+      "ticketUrl": "https://lu.ma/stomp-pride-stampede",
+      "cover": "https://picsum.photos/seed/stomp-evt3/1200/800",
+      "blurb": "Our biggest night of the year. Rhinestones encouraged, glitter mandatory."
+    },
+    {
+      "id": "evt-004",
+      "title": "Sunday Social",
+      "date": "2026-08-09",
+      "start": "16:00",
+      "end": "20:00",
+      "venue": "Pllek",
+      "city": "Amsterdam-Noord",
+      "type": "THE CLASS",
+      "status": "free",
+      "lumaUrl": "https://lu.ma/stomp-sunday-social",
+      "ticketUrl": "https://lu.ma/stomp-sunday-social",
+      "cover": "https://picsum.photos/seed/stomp-evt4/1200/800",
+      "blurb": "Free daytime social on the IJ. Bring a friend, slow it down, learn a two-step."
+    }
+  ],
+  "tutorials": [
+    { "id": "t1", "title": "Cowboy Boogie", "level": "Beginner", "duration": "4 min", "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumb": "https://picsum.photos/seed/stomp-t1/640/400" },
+    { "id": "t2", "title": "Watermelon Crawl", "level": "Beginner", "duration": "5 min", "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumb": "https://picsum.photos/seed/stomp-t2/640/400" },
+    { "id": "t3", "title": "Tush Push", "level": "Beginner", "duration": "6 min", "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumb": "https://picsum.photos/seed/stomp-t3/640/400" },
+    { "id": "t4", "title": "Footloose", "level": "Intermediate", "duration": "7 min", "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumb": "https://picsum.photos/seed/stomp-t4/640/400" },
+    { "id": "t5", "title": "Wagon Wheel", "level": "Intermediate", "duration": "6 min", "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumb": "https://picsum.photos/seed/stomp-t5/640/400" },
+    { "id": "t6", "title": "Good Time Stomp", "level": "Advanced", "duration": "8 min", "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumb": "https://picsum.photos/seed/stomp-t6/640/400" }
+  ],
+  "sisterClubs": [
+    { "name": "Stud Country", "city": "Los Angeles & New York", "url": "https://www.studcountry.com", "note": "Queer two-step & line dancing" },
+    { "name": "Sundance Saloon", "city": "San Francisco", "url": "https://www.sundancesaloon.org", "note": "Country-western for the LGBTQ+ crowd" },
+    { "name": "Big Apple Ranch", "city": "New York", "url": "https://www.bigappleranch.com", "note": "Gay & lesbian country dancing" },
+    { "name": "Out & About", "city": "London", "url": "https://example.com/out-and-about", "note": "Queer line dancing nights" },
+    { "name": "Rodeo Berlin", "city": "Berlin", "url": "https://example.com/rodeo-berlin", "note": "Honky-tonk, queered" }
+  ],
+  "privateEvents": {
+    "headline": "Private party?",
+    "body": "Planning a bachelorette, birthday, Pride bash or team event? We host private STOMP parties — we bring the dances, the playlist, and the rowdy good time. You bring the crew.",
+    "inquireUrl": "contact.html",
+    "options": [
+      { "label": "Bachelor / Bachelorette", "image": "https://picsum.photos/seed/stomp-pe1/800/1000?grayscale" },
+      { "label": "Birthday", "image": "https://picsum.photos/seed/stomp-pe2/800/1000?grayscale" },
+      { "label": "Pride & Corporate", "image": "https://picsum.photos/seed/stomp-pe3/800/1000?grayscale" }
+    ],
+    "backdrop": "https://picsum.photos/seed/stomp-pe-bg/1900/1100?grayscale"
+  },
+  "footer": {
+    "blurb": "STOMP brings queer country line dancing to Amsterdam, with welcoming social nights and structured classes that are fun, friendly, and worth coming back for.",
+    "pages": [
+      { "label": "HOME", "url": "#top" },
+      { "label": "EVENTS", "url": "#schedule" },
+      { "label": "GALLERY", "url": "#tutorials" },
+      { "label": "ABOUT & FAQ", "url": "about.html" },
+      { "label": "PRIVATE EVENTS", "url": "#private" }
+    ],
+    "findUs": [
+      { "label": "CONTACT", "url": "contact.html" },
+      { "label": "INSTAGRAM", "url": "https://instagram.com/stomp.amsterdam" },
+      { "label": "TIKTOK", "url": "https://tiktok.com/@stomp.amsterdam" }
+    ],
+    "other": [
+      { "label": "PRIVACY", "url": "privacy.html" }
+    ]
+  }
+}
