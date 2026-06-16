@@ -5,6 +5,13 @@ sound-first site with an animated frontend schedule and a lightweight admin dash
 
 > No watermark, no framework lock-in, no monthly cost beyond a domain. Deploys free on Vercel.
 
+## Live
+
+- Dev (from `dev`): https://stomp-amsterdam-git-dev-gp-sbs-projects.vercel.app
+- Production (from `main`): https://stomp-amsterdam.vercel.app
+
+The `dev` branch auto-deploys on every push; `main` is reserved for production.
+
 ## What's here
 
 | File | Purpose |
