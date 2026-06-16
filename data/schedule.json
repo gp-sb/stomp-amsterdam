@@ -1,0 +1,89 @@
+{
+  "club": {
+    "name": "STOMP",
+    "city": "Amsterdam",
+    "tagline": "Raw sound. Concrete floors. No last call.",
+    "address": "Veemkade 380, Amsterdam-Noord",
+    "updated": "2026-06-16"
+  },
+  "events": [
+    {
+      "id": "evt-001",
+      "title": "Concrete Pulse",
+      "date": "2026-06-19",
+      "start": "23:00",
+      "end": "06:00",
+      "room": "Main Hall",
+      "genre": "Techno",
+      "lineup": ["AISHA", "Volk", "Nørr B2B Pelt"],
+      "status": "on-sale",
+      "price": "€18",
+      "blurb": "Hypnotic, low-slung techno until the sun comes up. Fog, strobes, and a wall of sub-bass."
+    },
+    {
+      "id": "evt-002",
+      "title": "Basement Tapes",
+      "date": "2026-06-21",
+      "start": "22:00",
+      "end": "04:00",
+      "room": "The Cellar",
+      "genre": "House",
+      "lineup": ["Maud Geffen", "Tijn", "Resident: Loek"],
+      "status": "few-left",
+      "price": "€14",
+      "blurb": "Warm, dusty house records dug out of the crates. Intimate room, big heart."
+    },
+    {
+      "id": "evt-003",
+      "title": "STOMP x Noord Collective",
+      "date": "2026-06-27",
+      "start": "23:30",
+      "end": "07:00",
+      "room": "Main Hall",
+      "genre": "Electro",
+      "lineup": ["Drexa", "Bitwave", "VHS Dreams (live)"],
+      "status": "on-sale",
+      "price": "€20",
+      "blurb": "Electro and breaks with a live hardware set. Visuals by the Noord AV crew."
+    },
+    {
+      "id": "evt-004",
+      "title": "Sunday Sediment",
+      "date": "2026-06-28",
+      "start": "16:00",
+      "end": "23:00",
+      "room": "Courtyard",
+      "genre": "Ambient",
+      "lineup": ["Hale", "soft static", "open decks"],
+      "status": "free",
+      "price": "Free",
+      "blurb": "Daytime ambient and dub on the canal-side courtyard. Bring a friend, slow down."
+    },
+    {
+      "id": "evt-005",
+      "title": "Hard Matter",
+      "date": "2026-07-04",
+      "start": "23:00",
+      "end": "06:00",
+      "room": "Main Hall",
+      "genre": "Hard Techno",
+      "lineup": ["KRZ", "Ferra", "Unit-9"],
+      "status": "on-sale",
+      "price": "€22",
+      "blurb": "Fast, relentless, and loud. Earplugs at the door, no apologies."
+    },
+    {
+      "id": "evt-006",
+      "title": "Crate Diggers Market",
+      "date": "2026-07-06",
+      "start": "13:00",
+      "end": "20:00",
+      "room": "Courtyard",
+      "genre": "Vinyl Market",
+      "lineup": ["20+ sellers", "all-day selectors"],
+      "status": "free",
+      "price": "Free",
+      "blurb": "Record fair by day with rotating selectors. Coffee, crates, and good company."
+    }
+  ]
+}
