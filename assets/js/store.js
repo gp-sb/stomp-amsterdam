@@ -1,18 +1,17 @@
 /* ============================================================
-   STOMP — shared schedule store
-   Loads data/schedule.json. For the POC, the admin dashboard can
-   override the published file with a local draft kept in
-   localStorage so changes show up instantly on the frontend.
-   In production this same JSON would be committed to the repo
-   (e.g. via a Git-based CMS), which triggers a Vercel redeploy.
+   STOMP — shared content store
+   Loads data/content.json (all editable site copy). The admin
+   dashboard can keep a local draft in localStorage so edits show
+   up instantly on this device; publishing = export content.json
+   and commit it (auto-deploys on Vercel).
    ============================================================ */
 window.StompStore = (function () {
-  const LS_KEY = "stomp.schedule.draft.v1";
-  const JSON_URL = "data/schedule.json";
+  const LS_KEY = "stomp.content.draft.v2";
+  const JSON_URL = "data/content.json";
 
   async function loadPublished() {
     const res = await fetch(JSON_URL, { cache: "no-store" });
-    if (!res.ok) throw new Error("Could not load schedule.json (" + res.status + ")");
+    if (!res.ok) throw new Error("Could not load content.json (" + res.status + ")");
     return res.json();
   }
 
@@ -20,22 +19,11 @@ window.StompStore = (function () {
     try {
       const raw = localStorage.getItem(LS_KEY);
       return raw ? JSON.parse(raw) : null;
-    } catch (_) {
-      return null;
-    }
+    } catch (_) { return null; }
   }
-
-  function saveDraft(data) {
-    localStorage.setItem(LS_KEY, JSON.stringify(data));
-  }
-
-  function clearDraft() {
-    localStorage.removeItem(LS_KEY);
-  }
-
-  function hasDraft() {
-    return !!localStorage.getItem(LS_KEY);
-  }
+  function saveDraft(data) { localStorage.setItem(LS_KEY, JSON.stringify(data)); }
+  function clearDraft() { localStorage.removeItem(LS_KEY); }
+  function hasDraft() { return !!localStorage.getItem(LS_KEY); }
 
   async function loadForDisplay() {
     const draft = loadDraft();
@@ -44,12 +32,24 @@ window.StompStore = (function () {
   }
 
   function sortEvents(events) {
-    return [...events].sort((a, b) => {
-      const da = a.date + (a.start || "");
-      const db = b.date + (b.start || "");
+    return [...(events || [])].sort((a, b) => {
+      const da = (a.date || "") + (a.start || "");
+      const db = (b.date || "") + (b.start || "");
       return da < db ? -1 : da > db ? 1 : 0;
     });
   }
 
-  return { loadPublished, loadDraft, saveDraft, clearDraft, hasDraft, loadForDisplay, sortEvents };
+  /* Enrich an event from Luma when it has a lumaUrl. Falls back silently
+     to the stored fields if the API/key isn't available (returns null). */
+  async function enrichFromLuma(lumaUrl) {
+    if (!lumaUrl) return null;
+    try {
+      const res = await fetch("/api/luma?url=" + encodeURIComponent(lumaUrl));
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data && data.source === "luma" ? data : null;
+    } catch (_) { return null; }
+  }
+
+  return { loadPublished, loadDraft, saveDraft, clearDraft, hasDraft, loadForDisplay, sortEvents, enrichFromLuma };
 })();
