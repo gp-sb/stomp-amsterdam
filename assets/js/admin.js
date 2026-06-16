@@ -1,226 +1,177 @@
 /* ============================================================
-   STOMP — admin dashboard logic (proof of concept)
-   - simple client-side gate (NOT real security, see note in UI)
-   - add / edit / delete events
-   - changes saved to a local draft (localStorage) so they appear
-     instantly on the frontend on this device
-   - export schedule.json (the file you'd commit to publish for all)
-   - import an existing schedule.json
+   STOMP — admin dashboard (proof of concept)
+   Schema-driven editor for every section of data/content.json.
+   Edits save to a local draft (localStorage) so they show on the
+   site on this device; Export content.json to publish for everyone.
+   The gate is client-side only and NOT real security.
    ============================================================ */
 (function () {
-  const DEMO_CODE = "stomp"; // POC only — replace with real auth before going live
-  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  let model = null;
-  let editingId = null;
-
+  const DEMO_CODE = "stomp";
   const $ = (s, r = document) => r.querySelector(s);
+  let model = null, activeTab = "events", editingIndex = null;
+
+  const SELECTS = {
+    type: ["THE PARTY", "THE CLASS"],
+    status: ["on-sale", "few-left", "sold-out", "free"],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    icon: ["heart", "instagram", "whatsapp"],
+    color: ["denim", "butter"]
+  };
+
+  const TABS = [
+    { id: "events", label: "Events", key: "events", titleField: "title", metaFn: (e) => `${e.date || "?"} · ${e.type || ""} · ${e.status || ""}`,
+      fields: [
+        { name: "title", label: "Title", type: "text" },
+        { name: "lumaUrl", label: "Luma link (autofills details when API key is set)", type: "text", placeholder: "https://lu.ma/your-event" },
+        { name: "type", label: "Type", type: "select", options: SELECTS.type },
+        { name: "status", label: "Status", type: "select", options: SELECTS.status },
+        { name: "date", label: "Date", type: "date" }, { name: "start", label: "Start", type: "time" }, { name: "end", label: "End", type: "time" },
+        { name: "venue", label: "Venue", type: "text" }, { name: "city", label: "City", type: "text" },
+        { name: "blurb", label: "Short blurb", type: "textarea" }
+      ] },
+    { id: "tutorials", label: "Tutorials", key: "tutorials", titleField: "title", metaFn: (t) => `${t.level || ""} · ${t.duration || ""}`,
+      fields: [
+        { name: "title", label: "Dance name", type: "text" },
+        { name: "level", label: "Level", type: "select", options: SELECTS.level },
+        { name: "duration", label: "Duration", type: "text", placeholder: "5 min" },
+        { name: "url", label: "Video link (YouTube / Drive)", type: "text" },
+        { name: "thumb", label: "Thumbnail URL", type: "text" }
+      ] },
+    { id: "sisterClubs", label: "Sister clubs", key: "sisterClubs", titleField: "name", metaFn: (c) => `${c.city || ""}`,
+      fields: [
+        { name: "name", label: "Club name", type: "text" }, { name: "city", label: "City", type: "text" },
+        { name: "url", label: "Link", type: "text" }, { name: "note", label: "Note", type: "text" }
+      ] },
+    { id: "keyLinks", label: "Key links", key: "keyLinks", titleField: "label", metaFn: (k) => k.url || "",
+      fields: [
+        { name: "label", label: "Label", type: "text" }, { name: "sub", label: "Subtitle", type: "text" },
+        { name: "url", label: "URL", type: "text" }, { name: "icon", label: "Icon", type: "select", options: SELECTS.icon }
+      ] },
+    { id: "waysToDance", label: "Ways to dance", key: "waysToDance", titleField: "name", metaFn: (w) => w.level || "",
+      fields: [
+        { name: "name", label: "Name", type: "text" }, { name: "level", label: "Level", type: "text" },
+        { name: "color", label: "Card colour", type: "select", options: SELECTS.color },
+        { name: "image", label: "Image URL", type: "text" }, { name: "blurb", label: "Blurb", type: "textarea" }
+      ] },
+    { id: "text", label: "Text & links", type: "fields",
+      fields: [
+        { path: "brand.tagline", label: "Tagline" },
+        { path: "hero.kicker", label: "Hero kicker" },
+        { path: "hero.headline", label: "Hero headline" },
+        { path: "hero.sub", label: "Hero subtext", type: "textarea" },
+        { path: "hero.poster", label: "Hero poster image URL" },
+        { path: "about.lead", label: "About — lead line" },
+        { path: "about.highlight", label: "About — highlighted phrase" },
+        { path: "about.body", label: "About — body", type: "textarea" },
+        { path: "about.fullStoryUrl", label: "About — full story link" },
+        { path: "privateEvents.headline", label: "Private events — headline" },
+        { path: "privateEvents.body", label: "Private events — body", type: "textarea" },
+        { path: "privateEvents.inquireUrl", label: "Private events — inquire link" },
+        { path: "footer.blurb", label: "Footer blurb", type: "textarea" }
+      ] }
+  ];
+
+  const getPath = (o, p) => p.split(".").reduce((a, k) => (a == null ? a : a[k]), o);
+  function setPath(o, p, v) { const ks = p.split("."); let c = o; for (let i = 0; i < ks.length - 1; i++) { c[ks[i]] = c[ks[i]] || {}; c = c[ks[i]]; } c[ks[ks.length - 1]] = v; }
 
   function initGate() {
-    const gate = $("#gate");
-    const input = $("#gate-input");
-    const err = $("#gate-err");
     $("#gate-form").addEventListener("submit", (e) => {
       e.preventDefault();
-      if (input.value.trim().toLowerCase() === DEMO_CODE) {
-        gate.style.display = "none";
-        boot();
-      } else {
-        err.textContent = "Wrong code. (Hint for this demo: stomp)";
-        input.value = "";
-      }
+      if ($("#gate-input").value.trim().toLowerCase() === DEMO_CODE) { $("#gate").style.display = "none"; boot(); }
+      else { $("#gate-err").textContent = "Wrong code. (demo: stomp)"; $("#gate-input").value = ""; }
     });
   }
 
   async function loadModel() {
     const draft = window.StompStore.loadDraft();
     if (draft) { model = draft; return; }
-    try { model = await window.StompStore.loadPublished(); }
-    catch (_) { model = { club: { name: "STOMP", city: "Amsterdam", updated: today() }, events: [] }; }
+    try { model = await window.StompStore.loadPublished(); } catch (_) { model = { brand: {}, events: [] }; }
   }
 
-  function today() { return new Date().toISOString().slice(0, 10); }
-  function uid() { return "evt-" + Math.random().toString(36).slice(2, 8); }
+  function persist() { model.brand = model.brand || {}; model.brand.updated = new Date().toISOString().slice(0, 10); window.StompStore.saveDraft(model); updateState(); }
+  function updateState() { const has = window.StompStore.hasDraft(); $("#state").textContent = has ? "Local draft active" : "Showing published"; $("#discard-btn").hidden = !has; }
 
-  function persist() {
-    model.club = model.club || {};
-    model.club.updated = today();
-    window.StompStore.saveDraft(model);
-    renderList();
-    updateStatusline();
-  }
-
-  function readForm() {
-    const lineup = $("#f-lineup").value.split(",").map((s) => s.trim()).filter(Boolean);
-    return {
-      id: editingId || uid(),
-      title: $("#f-title").value.trim(),
-      date: $("#f-date").value,
-      start: $("#f-start").value,
-      end: $("#f-end").value,
-      room: $("#f-room").value.trim(),
-      genre: $("#f-genre").value.trim(),
-      status: $("#f-status").value,
-      price: $("#f-price").value.trim(),
-      lineup,
-      blurb: $("#f-blurb").value.trim()
-    };
-  }
-
-  function fillForm(evt) {
-    $("#f-title").value = evt.title || "";
-    $("#f-date").value = evt.date || "";
-    $("#f-start").value = evt.start || "";
-    $("#f-end").value = evt.end || "";
-    $("#f-room").value = evt.room || "";
-    $("#f-genre").value = evt.genre || "";
-    $("#f-status").value = evt.status || "on-sale";
-    $("#f-price").value = evt.price || "";
-    $("#f-lineup").value = (evt.lineup || []).join(", ");
-    $("#f-blurb").value = evt.blurb || "";
-  }
-
-  function resetForm() {
-    editingId = null;
-    $("#event-form").reset();
-    $("#f-status").value = "on-sale";
-    $("#form-title").textContent = "Add a night";
-    $("#submit-btn").textContent = "Add to schedule";
-    $("#cancel-btn").hidden = true;
-    document.querySelectorAll(".admin-event.is-editing").forEach((n) => n.classList.remove("is-editing"));
-  }
-
-  function startEdit(id) {
-    const evt = model.events.find((e) => e.id === id);
-    if (!evt) return;
-    editingId = id;
-    fillForm(evt);
-    $("#form-title").textContent = "Edit night";
-    $("#submit-btn").textContent = "Save changes";
-    $("#cancel-btn").hidden = false;
-    document.querySelectorAll(".admin-event").forEach((n) => n.classList.toggle("is-editing", n.dataset.id === id));
-    $("#event-form").scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function removeEvent(id) {
-    const evt = model.events.find((e) => e.id === id);
-    if (!evt) return;
-    if (!confirm(`Delete "${evt.title}" from the schedule?`)) return;
-    model.events = model.events.filter((e) => e.id !== id);
-    if (editingId === id) resetForm();
-    persist();
-    toast("Night deleted");
-  }
-
-  function fmtDateShort(iso) {
-    if (!iso) return { d: "--", m: "" };
-    const dt = new Date(iso + "T00:00:00");
-    return { d: String(dt.getDate()).padStart(2, "0"), m: MONTHS[dt.getMonth()] };
-  }
-
-  function renderList() {
-    const wrap = $("#admin-list");
-    const events = window.StompStore.sortEvents(model.events || []);
-    $("#count").textContent = events.length + (events.length === 1 ? " night" : " nights");
-    wrap.innerHTML = "";
-    if (!events.length) {
-      wrap.innerHTML = `<p style="color:var(--ink-dim)">No nights yet. Add your first one on the left.</p>`;
-      return;
-    }
-    events.forEach((evt) => {
-      const d = fmtDateShort(evt.date);
-      const row = document.createElement("div");
-      row.className = "admin-event";
-      row.dataset.id = evt.id;
-      row.innerHTML = `
-        <div class="admin-event__date"><div class="d">${d.d}</div><div class="m">${d.m}</div></div>
-        <div>
-          <div class="admin-event__title">${evt.title || "Untitled"}</div>
-          <div class="admin-event__meta">${evt.room || "—"} · ${evt.genre || "—"} · ${evt.start || "?"}–${evt.end || "?"} · ${evt.price || ""}</div>
-        </div>
-        <div class="admin-event__btns">
-          <button class="icon-btn" data-edit aria-label="Edit ${evt.title}">✎</button>
-          <button class="icon-btn icon-btn--danger" data-del aria-label="Delete ${evt.title}">✕</button>
-        </div>`;
-      row.querySelector("[data-edit]").addEventListener("click", () => startEdit(evt.id));
-      row.querySelector("[data-del]").addEventListener("click", () => removeEvent(evt.id));
-      wrap.appendChild(row);
-      if (typeof gsap !== "undefined") gsap.from(row, { opacity: 0, y: 10, duration: 0.35, ease: "power2.out" });
+  function renderTabs() {
+    const nav = $("#tabs"); nav.innerHTML = "";
+    TABS.forEach((t) => {
+      const b = document.createElement("button"); b.className = "admin-tab"; b.textContent = t.label;
+      b.setAttribute("aria-selected", t.id === activeTab);
+      b.addEventListener("click", () => { activeTab = t.id; editingIndex = null; renderTabs(); renderPanel(); });
+      nav.appendChild(b);
     });
   }
 
-  function updateStatusline() {
-    const has = window.StompStore.hasDraft();
-    $("#draft-state").textContent = has ? "Local draft active" : "Showing published file";
-    $("#draft-state").style.color = has ? "var(--acid)" : "var(--ink-dim)";
-    $("#discard-btn").hidden = !has;
+  function fieldInput(f, val) {
+    const id = "f_" + (f.name || f.path).replace(/\W/g, "_");
+    let inner;
+    if (f.type === "textarea") inner = `<textarea id="${id}">${val == null ? "" : String(val).replace(/</g, "&lt;")}</textarea>`;
+    else if (f.type === "select") inner = `<select id="${id}">${f.options.map((o) => `<option ${o === val ? "selected" : ""}>${o}</option>`).join("")}</select>`;
+    else inner = `<input id="${id}" type="${f.type === "date" ? "date" : f.type === "time" ? "time" : "text"}" value="${val == null ? "" : String(val).replace(/"/g, "&quot;")}" placeholder="${f.placeholder || ""}">`;
+    return `<div class="field"><label for="${id}">${f.label}</label>${inner}</div>`;
+  }
+
+  function renderPanel() {
+    const tab = TABS.find((t) => t.id === activeTab);
+    const panel = $("#panel");
+    if (tab.type === "fields") {
+      panel.innerHTML = `<h2>${tab.label}</h2><p class="panel__hint">Edit site copy. Changes save instantly to your local draft.</p>` +
+        tab.fields.map((f) => fieldInput(f, getPath(model, f.path))).join("");
+      tab.fields.forEach((f) => {
+        const inp = $("#f_" + f.path.replace(/\W/g, "_"));
+        inp.addEventListener("input", () => { setPath(model, f.path, inp.value); persist(); });
+      });
+      return;
+    }
+    model[tab.key] = model[tab.key] || [];
+    const editing = editingIndex != null ? model[tab.key][editingIndex] : {};
+    panel.innerHTML = `
+      <h2>${editingIndex != null ? "Edit" : "Add"} ${tab.label.replace(/s$/, "").toLowerCase()}</h2>
+      <p class="panel__hint">Changes save instantly to your local draft and show on the site on this device.</p>
+      <form id="entity-form">${tab.fields.map((f) => fieldInput(f, editing[f.name])).join("")}
+        <div class="form-actions">
+          <button class="btn btn--rodeo" type="submit">${editingIndex != null ? "Save changes" : "Add"}</button>
+          ${editingIndex != null ? '<button class="btn btn--ghost" type="button" id="cancel-btn">Cancel</button>' : ""}
+        </div>
+      </form>
+      <div class="item-list" id="item-list"></div>`;
+
+    $("#entity-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const obj = editingIndex != null ? model[tab.key][editingIndex] : {};
+      tab.fields.forEach((f) => { obj[f.name] = $("#f_" + f.name).value; });
+      if (tab.id === "events") { if (!obj.id) obj.id = "evt-" + Math.random().toString(36).slice(2, 7); if (!obj.ticketUrl || editingIndex != null) obj.ticketUrl = obj.lumaUrl; }
+      if (editingIndex == null) model[tab.key].push(obj);
+      editingIndex = null; persist(); renderPanel(); toast("Saved");
+    });
+    if ($("#cancel-btn")) $("#cancel-btn").addEventListener("click", () => { editingIndex = null; renderPanel(); });
+
+    const list = $("#item-list");
+    model[tab.key].forEach((it, i) => {
+      const row = document.createElement("div"); row.className = "item" + (i === editingIndex ? " is-editing" : "");
+      row.innerHTML = `<div class="item__main"><div class="item__title">${(it[tab.titleField] || "Untitled")}</div><div class="item__meta">${tab.metaFn(it)}</div></div>
+        <div class="item__btns"><button class="icon-btn" data-edit>✎</button><button class="icon-btn icon-btn--danger" data-del>✕</button></div>`;
+      row.querySelector("[data-edit]").addEventListener("click", () => { editingIndex = i; renderPanel(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+      row.querySelector("[data-del]").addEventListener("click", () => { if (confirm("Delete this item?")) { model[tab.key].splice(i, 1); if (editingIndex === i) editingIndex = null; persist(); renderPanel(); toast("Deleted"); } });
+      list.appendChild(row);
+    });
   }
 
   function exportJSON() {
-    model.club = model.club || {};
-    model.club.updated = today();
+    persist();
     const blob = new Blob([JSON.stringify(model, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = "schedule.json";
-    a.click();
-    URL.revokeObjectURL(url);
-    toast("schedule.json downloaded");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "content.json"; a.click(); URL.revokeObjectURL(a.href);
+    toast("content.json downloaded");
   }
+  function importJSON(file) { const r = new FileReader(); r.onload = () => { try { model = JSON.parse(r.result); persist(); renderPanel(); toast("Imported"); } catch (_) { toast("Invalid JSON"); } }; r.readAsText(file); }
 
-  function importJSON(file) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const parsed = JSON.parse(reader.result);
-        if (!parsed.events) throw new Error("missing events");
-        model = parsed;
-        persist();
-        toast("Imported schedule.json");
-      } catch (e) {
-        toast("Invalid JSON file");
-      }
-    };
-    reader.readAsText(file);
-  }
-
-  let toastTimer;
-  function toast(msg) {
-    const t = $("#toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
-  }
+  let tt; function toast(m) { const t = $("#toast"); t.textContent = m; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 1800); }
 
   async function boot() {
-    await loadModel();
-    resetForm();
-    renderList();
-    updateStatusline();
-
-    $("#event-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const data = readForm();
-      if (!data.title || !data.date) { toast("Title and date are required"); return; }
-      const idx = model.events.findIndex((x) => x.id === data.id);
-      if (idx >= 0) model.events[idx] = data; else model.events.push(data);
-      const wasEditing = editingId;
-      persist();
-      resetForm();
-      toast(wasEditing ? "Changes saved" : "Night added");
-    });
-
-    $("#cancel-btn").addEventListener("click", (e) => { e.preventDefault(); resetForm(); });
+    await loadModel(); updateState(); renderTabs(); renderPanel();
     $("#export-btn").addEventListener("click", exportJSON);
     $("#import-input").addEventListener("change", (e) => { if (e.target.files[0]) importJSON(e.target.files[0]); e.target.value = ""; });
-    $("#discard-btn").addEventListener("click", () => {
-      if (!confirm("Discard your local draft and revert to the published schedule?")) return;
-      window.StompStore.clearDraft();
-      boot();
-      toast("Draft discarded");
-    });
+    $("#discard-btn").addEventListener("click", () => { if (confirm("Discard local draft and revert to published content?")) { window.StompStore.clearDraft(); boot(); toast("Draft discarded"); } });
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initGate);
-  else initGate();
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initGate); else initGate();
 })();
