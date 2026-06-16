@@ -3,108 +3,148 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>STOMP — Amsterdam</title>
-  <meta name="description" content="STOMP is a raw, sound-first club in Amsterdam-Noord. Techno, house, electro and ambient — see what's coming up." />
-  <meta property="og:title" content="STOMP — Amsterdam" />
-  <meta property="og:description" content="Raw sound. Concrete floors. No last call." />
+  <title>STOMP — Queer line dancing, Amsterdam</title>
+  <meta name="description" content="STOMP brings queer country line dancing to Amsterdam — welcoming social nights and structured classes. No partner, no experience, no judgment." />
+  <meta property="og:title" content="STOMP — Queer line dancing, Amsterdam" />
+  <meta property="og:description" content="Queer country line dancing, brought to Amsterdam. Boots, big tunes, good people." />
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
   <header class="nav">
     <a class="nav__brand" href="#top">STOMP</a>
-    <nav class="nav__links" aria-label="Primary">
-      <a href="#schedule">Schedule</a>
-      <a href="#info">Visit</a>
-      <a href="admin.html">Admin</a>
-    </nav>
+    <button class="menu-toggle" id="menu-open" aria-label="Open menu"><span class="bars" aria-hidden="true"></span> Menu</button>
   </header>
 
+  <!-- MENU OVERLAY -->
+  <div class="overlay" id="overlay" role="dialog" aria-label="Menu">
+    <div class="overlay__top"><button class="overlay__close" id="menu-close">Close ✕</button></div>
+    <nav class="overlay__links" aria-label="Primary">
+      <a href="#top">Home</a>
+      <a href="#schedule">Events</a>
+      <a href="#tutorials">Gallery</a>
+      <a href="about.html">About &amp; FAQ</a>
+      <a href="#private">Private events</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="overlay__foot"><span>Queer line dancing</span><span>·</span><span>Amsterdam</span><span>·</span><span class="script" style="font-size:20px">yee + haw</span></div>
+  </div>
+
   <main id="top">
+    <!-- HERO -->
     <section class="hero">
-      <canvas class="hero__canvas" id="hero-canvas" aria-hidden="true"></canvas>
-      <div class="hero__vignette" aria-hidden="true"></div>
-      <div class="hero__inner wrap">
-        <p class="hero__kicker">Amsterdam-Noord · Est. 2026</p>
-        <h1 class="hero__title">STOMP</h1>
-        <div class="hero__sub">
-          <span data-club-tagline>Raw sound. Concrete floors. No last call.</span>
-          <span><strong>Fri–Sun</strong> · doors 22:00</span>
+      <img class="hero__poster" id="hero-poster" alt="" />
+      <div class="hero__boot" id="hero-boot" aria-hidden="true"></div>
+      <div class="hero__top wrap">
+        <p class="hero__kicker" id="hero-kicker"></p>
+        <h1 class="hero__title" id="hero-title">Ready to stomp those boots?</h1>
+        <p class="hero__sub" id="hero-sub"></p>
+      </div>
+      <div class="wrap">
+        <div class="hero__events" id="hero-events"></div>
+        <div class="he-foot">
+          <span class="script" style="font-size:1.6em">Want to see more?</span>
+          <a href="#schedule">View all events →</a>
         </div>
       </div>
     </section>
 
-    <div class="marquee" aria-hidden="true">
+    <div class="marquee" style="background:var(--ink);color:var(--bone)" aria-hidden="true">
       <div class="marquee__track">
-        <span>Techno</span><span>House</span><span>Electro</span><span>Ambient</span><span>Live</span><span>Vinyl</span>
-        <span>Techno</span><span>House</span><span>Electro</span><span>Ambient</span><span>Live</span><span>Vinyl</span>
+        <span>Yee haw</span><span>All are welcome</span><span>No partner needed</span><span>Boots optional</span><span>Line dancing</span>
+        <span>Yee haw</span><span>All are welcome</span><span>No partner needed</span><span>Boots optional</span><span>Line dancing</span>
       </div>
     </div>
 
-    <section class="section" id="schedule">
+    <!-- KEY LINKS -->
+    <section class="keylinks">
+      <div class="keylinks__grid" id="keylinks-grid"></div>
+    </section>
+
+    <!-- TWO WAYS TO DANCE -->
+    <section class="section ways">
       <div class="wrap">
-        <div class="section__head reveal">
-          <div>
-            <span class="section__index">01 — What's on</span>
-            <h2 class="section__title">Schedule</h2>
-          </div>
-          <p class="section__meta">
-            Tap any night for details<br />
-            <span data-club-updated>Updated —</span>
-          </p>
-        </div>
-
-        <p id="draft-banner" hidden style="margin:-16px 0 26px;color:var(--acid);font-size:13px;letter-spacing:0.06em;">
-          ◆ Showing an unpublished local draft (from the admin dashboard on this device).
-        </p>
-
-        <div class="filters" id="filters" role="group" aria-label="Filter by genre"></div>
-        <div class="schedule" id="schedule-list" aria-live="polite"></div>
+        <div class="section__eyebrow reveal">✷ The party · the class ✷</div>
+        <h2 class="section__title reveal">Two ways to dance</h2>
+        <div class="ways__grid" id="ways-grid"></div>
       </div>
     </section>
 
-    <section class="section" id="info" style="padding-top:0;">
+    <!-- ABOUT -->
+    <section class="section about">
+      <span class="star-decor" style="left:6%;top:18%">✷</span>
+      <span class="star-decor" style="right:8%;top:30%">✷</span>
       <div class="wrap">
-        <div class="section__head reveal">
-          <div>
-            <span class="section__index">02 — Visit</span>
-            <h2 class="section__title">Find us</h2>
-          </div>
+        <h2 class="about__statement reveal" id="about-statement"></h2>
+        <div class="about__photos reveal" id="about-photos"></div>
+        <p class="about__body reveal" id="about-body"></p>
+        <a class="read-story reveal" id="about-link" href="about.html">Read our full story →</a>
+      </div>
+    </section>
+
+    <!-- SCHEDULE -->
+    <section class="section schedule" id="schedule">
+      <div class="wrap">
+        <div class="section__eyebrow reveal">✷ Upcoming · line dancing ✷</div>
+        <h2 class="section__title reveal">The schedule</h2>
+        <div class="filters" id="sched-filters" role="group" aria-label="Filter events"></div>
+        <div class="sched-list" id="sched-list" aria-live="polite"></div>
+        <div class="sched-foot"><a class="btn btn--ghost" style="color:var(--ink);border-color:var(--ink)" href="#top">Back to top ↑</a></div>
+      </div>
+    </section>
+
+    <!-- TUTORIALS -->
+    <section class="section tutorials" id="tutorials">
+      <div class="wrap">
+        <div class="section__eyebrow reveal">✷ Learn the dances ✷</div>
+        <h2 class="section__title reveal">The feed</h2>
+        <p style="text-align:center;color:var(--bone-dim);max-width:54ch;margin:14px auto 0">Get familiar with the dances we teach in class. Practice at home, then come show off on the floor.</p>
+        <div class="tut-grid" id="tut-grid"></div>
+      </div>
+    </section>
+
+    <!-- SISTER CLUBS -->
+    <section class="section sisters">
+      <div class="wrap">
+        <div class="section__eyebrow reveal">✷ The wider herd ✷</div>
+        <h2 class="section__title reveal">Queer line dancing worldwide</h2>
+        <div class="sister-list" id="sister-list"></div>
+      </div>
+    </section>
+
+    <!-- PRIVATE EVENTS -->
+    <section class="section private" id="private">
+      <div class="private__bg"><img id="private-bg" alt="" /></div>
+      <div class="wrap private__inner">
+        <div class="private__title">
+          <h2 class="reveal">Private</h2>
+          <h2 class="reveal" id="private-title-h">party?</h2>
         </div>
-        <div class="info reveal">
-          <div class="info__cell">
-            <h4>Address</h4>
-            <p data-club-address>Veemkade 380, Amsterdam-Noord</p>
-          </div>
-          <div class="info__cell">
-            <h4>Hours</h4>
-            <p>Fri &amp; Sat 22:00–07:00<br />Sun daytime programme</p>
-          </div>
-          <div class="info__cell">
-            <h4>Door</h4>
-            <p>18+ · ID required<br />Respect the floor &amp; each other</p>
-          </div>
-          <div class="info__cell">
-            <h4>Tickets</h4>
-            <p>On the door &amp; online<br />Cash and card accepted</p>
-          </div>
-        </div>
+        <div class="private__cards" id="private-cards"></div>
+        <p class="private__body reveal" id="private-body"></p>
+        <a class="btn btn--rodeo reveal" id="private-link" href="contact.html">Inquire today →</a>
       </div>
     </section>
   </main>
 
+  <!-- FOOTER -->
   <footer class="footer">
-    <div class="wrap footer__grid">
-      <div>
-        <div class="footer__mark">STOMP</div>
-        <p class="footer__note" style="margin-top:18px;">© 2026 STOMP Amsterdam · Proof of concept</p>
+    <div class="wrap">
+      <div class="footer__grid">
+        <div class="footer__blurb" id="footer-blurb"></div>
+        <div class="footer__col"><h4>Pages</h4><div id="footer-pages"></div></div>
+        <div class="footer__col"><h4>Find us</h4><div id="footer-findus"></div>
+          <h4 style="margin-top:22px">Other</h4><div id="footer-other"></div>
+        </div>
       </div>
-      <div style="text-align:right;">
-        <a class="btn btn--ghost" href="admin.html">Admin dashboard</a>
-        <p class="footer__note" style="margin-top:16px;">Built with care · No watermark, just sound.</p>
+      <div class="footer__base">
+        <span id="footer-year">© 2026 STOMP</span>
+        <span>Queer line dancing</span>
+        <span>Brought to Amsterdam ✷</span>
+        <a href="admin.html" style="color:var(--bone-dim)">Admin</a>
       </div>
     </div>
   </footer>
